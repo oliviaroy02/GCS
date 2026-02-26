@@ -3,6 +3,7 @@
 #include "QGCLogging.h"
 #include "QGCLoggingCategory.h"
 #include "Platform.h"
+#include "AutoConnector.h"
 
 #ifdef QGC_UNITTEST_BUILD
     #include "UnitTestList.h"
@@ -24,7 +25,8 @@ int main(int argc, char *argv[])
     }
 
     QGCApplication app(argc, argv, args);
-
+    
+    qmlRegisterType<AutoConnector>("QGroundControl.Comms", 1, 0, "AutoConnector");
     QGCLogging::installHandler();
 
     Platform::setupPostApp();

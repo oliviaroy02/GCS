@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 import QtQuick.Window
+import Qt5Compat.GraphicalEffects
 
 import QGroundControl
 import QGroundControl.Controls
@@ -106,16 +107,41 @@ ApplicationWindow {
         flyView.visible = false
         planView.visible = true
         toolDrawer.visible = false
+        agvView.visible = false
     }
 
     function showFlyView() {
         flyView.visible = true
         planView.visible = false
         toolDrawer.visible = false
+        agvView.visible = false
     }
 
+    function showAGVView() {
+        flyView.visible = false
+        planView.visible = false
+        agvView.visible = true
+        toolDrawer.visible = false
+    }
+
+    // function showTool(toolTitle, toolSource, toolIcon) {
+    //     toolDrawer.backIcon     = flyView.visible ? "/qmlimages/PaperPlane.svg" : "/qmlimages/Plan.svg"
+    //     toolDrawer.toolTitle    = toolTitle
+    //     toolDrawer.toolSource   = toolSource
+    //     toolDrawer.toolIcon     = toolIcon
+    //     toolDrawer.visible      = true
+    // }
+
     function showTool(toolTitle, toolSource, toolIcon) {
-        toolDrawer.backIcon     = flyView.visible ? "/qmlimages/PaperPlane.svg" : "/qmlimages/Plan.svg"
+        // Determine back icon based on current view
+        var backIcon = "/qmlimages/PaperPlane.svg"
+        if (planView.visible) {
+            backIcon = "/qmlimages/Plan.svg"
+        } else if (agvView.visible) {
+            backIcon = "/qmlimages/Car.svg"  // AGV icon
+        }
+        
+        toolDrawer.backIcon     = backIcon
         toolDrawer.toolTitle    = toolTitle
         toolDrawer.toolSource   = toolSource
         toolDrawer.toolIcon     = toolIcon
@@ -264,6 +290,7 @@ ApplicationWindow {
     FlyView {
         id:                     flyView
         anchors.fill:           parent
+        visible:                false
     }
 
     PlanView {
@@ -271,6 +298,15 @@ ApplicationWindow {
         anchors.fill:   parent
         visible:        false
     }
+
+    Loader {
+        id:             agvView
+        anchors.fill:   parent
+        visible:        true
+        source:         "qrc:/qml/AGVView.qml"
+    }
+
+
 
     footer: LogReplayStatusBar {
         visible: QGroundControl.settingsManager.flyViewSettings.showLogReplayStatusBar.rawValue
@@ -509,13 +545,13 @@ ApplicationWindow {
 
     Popup {
         id:             indicatorDrawer
-        x:              calcXPosition()
-        y:              ScreenTools.toolbarHeight + _margins
+        x:              0 //_margins //calcXPosition()
+        y:              ScreenTools.toolbarHeight  // + _margins
         leftInset:      0
         rightInset:     0
         topInset:       0
         bottomInset:    0
-        padding:        _margins * 2
+        padding:        0 //_margins * 2
         visible:        false
         modal:          true
         focus:          true
@@ -526,6 +562,50 @@ ApplicationWindow {
 
         property bool _expanded:    false
         property real _margins:     ScreenTools.defaultFontPixelHeight / 4
+
+        onAboutToShow: {
+            // Force Y position to be correct before opening
+            indicatorDrawer.y = Qt.binding(function() { return ScreenTools.toolbarHeight })
+        }
+
+        enter: Transition {
+            ParallelAnimation {
+                NumberAnimation {
+                    property: "opacity"
+                    from: 0.0
+                    to: 1.0
+                    duration: 250
+                    easing.type: Easing.OutQuad
+                }
+                NumberAnimation {
+                    property: "x"
+                    from: -350 //ScreenTools.toolbarHeight - 100
+                    to: 0 //indicatorDrawer._margins //ScreenTools.toolbarHeight + indicatorDrawer._margins
+                    duration: 350 //300
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+
+        exit: Transition {
+            ParallelAnimation {
+                NumberAnimation {
+                    property: "opacity"
+                    from: 1.0
+                    to: 0.0
+                    duration: 200
+                    easing.type: Easing.InQuad
+                }
+                NumberAnimation {
+                    property: "x"
+                    from: 0 //indicatorDrawer.y
+                    to: -350 //ScreenTools.toolbarHeight - 50
+                    duration: 300
+                    easing.type: Easing.InCubic
+                }
+            }
+        }
+        // ========================================================
 
         function calcXPosition() {
             if (indicatorItem) {
@@ -539,11 +619,13 @@ ApplicationWindow {
         onOpened: {
             _expanded                               = false;
             indicatorDrawerLoader.sourceComponent   = indicatorDrawer.sourceComponent
+            indicatorDrawer.y = Qt.binding(function() { return ScreenTools.toolbarHeight })
         }
         onClosed: {
             _expanded                               = false
             indicatorItem                           = undefined
             indicatorDrawerLoader.sourceComponent   = undefined
+            indicatorDrawer.y = Qt.binding(function() { return ScreenTools.toolbarHeight })
         }
 
         background: Item {
@@ -552,7 +634,17 @@ ApplicationWindow {
                 anchors.fill:   parent
                 color:          QGroundControl.globalPalette.window
                 radius:         indicatorDrawer._margins
-                opacity:        0.85
+                opacity:        0.95  // ← Increased from 0.85 for better visibility
+                
+                // Add subtle shadow effect
+                layer.enabled: true
+                layer.effect: DropShadow {
+                    horizontalOffset: 0
+                    verticalOffset: 4
+                    radius: 12
+                    samples: 25
+                    color: Qt.rgba(0, 0, 0, 0.3)
+                }
             }
 
             Rectangle {
@@ -602,6 +694,82 @@ ApplicationWindow {
             }
         }
     }
+
+        // function calcXPosition() {
+        //     if (indicatorItem) {
+        //         var xCenter = indicatorItem.mapToItem(mainWindow.contentItem, indicatorItem.width / 2, 0).x
+        //         return Math.max(_margins, Math.min(xCenter - (contentItem.implicitWidth / 2), mainWindow.contentItem.width - contentItem.implicitWidth - _margins - (indicatorDrawer.padding * 2) - (ScreenTools.defaultFontPixelHeight / 2)))
+        //     } else {
+        //         return _margins
+        //     }
+        // }
+
+    //     onOpened: {
+    //         _expanded                               = false;
+    //         indicatorDrawerLoader.sourceComponent   = indicatorDrawer.sourceComponent
+    //     }
+    //     onClosed: {
+    //         _expanded                               = false
+    //         indicatorItem                           = undefined
+    //         indicatorDrawerLoader.sourceComponent   = undefined
+    //     }
+
+    //     background: Item {
+    //         Rectangle {
+    //             id:             backgroundRect
+    //             anchors.fill:   parent
+    //             color:          QGroundControl.globalPalette.window
+    //             radius:         indicatorDrawer._margins
+    //             opacity:        0.85
+    //         }
+
+    //         Rectangle {
+    //             anchors.horizontalCenter:   backgroundRect.right
+    //             anchors.verticalCenter:     backgroundRect.top
+    //             width:                      ScreenTools.largeFontPixelHeight
+    //             height:                     width
+    //             radius:                     width / 2
+    //             color:                      QGroundControl.globalPalette.button
+    //             border.color:               QGroundControl.globalPalette.buttonText
+    //             visible:                    indicatorDrawerLoader.item && indicatorDrawerLoader.item._showExpand && !indicatorDrawer._expanded
+
+    //             QGCLabel {
+    //                 anchors.centerIn:   parent
+    //                 text:               ">"
+    //                 color:              QGroundControl.globalPalette.buttonText
+    //             }
+
+    //             QGCMouseArea {
+    //                 fillItem: parent
+    //                 onClicked: indicatorDrawer._expanded = true
+    //             }
+    //         }
+    //     }
+
+    //     contentItem: QGCFlickable {
+    //         id:             indicatorDrawerLoaderFlickable
+    //         implicitWidth:  Math.min(mainWindow.contentItem.width - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.width)
+    //         implicitHeight: Math.min(mainWindow.contentItem.height - ScreenTools.toolbarHeight - (2 * indicatorDrawer._margins) - (indicatorDrawer.padding * 2), indicatorDrawerLoader.height)
+    //         contentWidth:   indicatorDrawerLoader.width
+    //         contentHeight:  indicatorDrawerLoader.height
+
+    //         Loader {
+    //             id: indicatorDrawerLoader
+
+    //             Binding {
+    //                 target:     indicatorDrawerLoader.item
+    //                 property:   "expanded"
+    //                 value:      indicatorDrawer._expanded
+    //             }
+
+    //             Binding {
+    //                 target:     indicatorDrawerLoader.item
+    //                 property:   "drawer"
+    //                 value:      indicatorDrawer
+    //             }
+    //         }
+    //     }
+    // }
 
     // We have to create the popup windows for the Analyze pages here so that the creation context is rooted
     // to mainWindow. Otherwise if they are rooted to the AnalyzeView itself they will die when the analyze viewSwitch

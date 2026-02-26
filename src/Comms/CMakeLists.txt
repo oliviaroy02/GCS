@@ -26,6 +26,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         UdpIODevice.h
         UDPLink.cc
         UDPLink.h
+        AutoConnector.h
+        AutoConnector.cc
 )
 
 # USB board information JSON data

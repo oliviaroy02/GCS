@@ -9,6 +9,10 @@
 *.ps1           text eol=crlf
 *.bat           text eol=crlf
 *.cmd           text eol=crlf
+*.qml           text eol=lf
+*.js            text eol=lf
+*.qmltypes      text eol=lf
+*.svg           text eol=lf
 
 # ──────────────────────────────────────────────────────────────
 # 2. Mark certain filetypes explicitly as binary
