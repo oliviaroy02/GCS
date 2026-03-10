@@ -1,802 +1,729 @@
-// //C:\NestLink\GCS\src\AGVView\SprayPanel.qml
-// import QtQuick
-// import QtQuick.Controls
-// import QtQuick.Layouts
-
-// Rectangle {
-//     anchors.fill:   parent
-//     color:          "#0d0d0d"
-
-//     property string _accent: "#1ff18f" //"#ff6b35"
-//     property int    _sectionSpacing: 12
-
-//     Flickable {
-//         anchors.fill:       parent
-//         contentHeight:      panelCol.height + 24
-//         clip:               true
-
-//         Column {
-//             id:         panelCol
-//             width:      parent.width
-//             padding:    16
-//             spacing:    _sectionSpacing
-
-//             // ── A. Spray Type ──────────────────────────────────────
-//             AGVPanelSelection {
-//                 width:          parent.width - 32
-//                 label:          "A   SPRAY TYPE"
-//                 accent:         _accent
-//                 options:        ["Herbicide", "Pesticide", "Fungicide", "Liquid Fertilizer", "Custom"]
-//             }
-
-//             AGVDivider { width: parent.width - 32 }
-
-//             // ── B. Spray Mode ──────────────────────────────────────
-//             AGVPanelSelection {
-//                 width:          parent.width - 32
-//                 label:          "B   SPRAY MODE"
-//                 accent:         _accent
-//                 options:        ["Manual", "Autonomous", "A-B Mode"]
-//             }
-
-//             AGVDivider { width: parent.width - 32 }
-
-//             // ── C. Spray Parameters ────────────────────────────────
-//             AGVSectionHeader { width: parent.width - 32; label: "C   SPRAY PARAMETERS"; accent: _accent }
-
-//             AGVSliderRow {
-//                 width:      parent.width - 32
-//                 label:      "Pump Speed"
-//                 unit:       "%"
-//                 minVal:     0
-//                 maxVal:     100
-//                 initVal:    50
-//             }
-
-//             AGVToggleRow {
-//                 width:      parent.width - 32
-//                 label:      "Variable Spray"
-//             }
-
-//             AGVDivider { width: parent.width - 32 }
-
-//             // ── D. Field & Navigation ──────────────────────────────
-//             AGVSectionHeader { width: parent.width - 32; label: "D   FIELD & NAVIGATION"; accent: _accent }
-
-//             AGVActionButton { width: parent.width - 32; label: "Select Saved Field" }
-//             AGVActionButton { width: parent.width - 32; label: "Create New Field" }
-//             AGVActionButton { width: parent.width - 32; label: "Auto Path Planning" }
-
-//             AGVDivider { width: parent.width - 32 }
-
-//             // ── E. Advanced Settings ───────────────────────────────
-//             AGVSectionHeader { width: parent.width - 32; label: "E   ADVANCED SETTINGS"; accent: _accent }
-//             AGVActionButton { width: parent.width - 32; label: "Spray Logging & Report" }
-//         }
-//     }
-// }
-
-
-//1st iteration
-// C:\NestLink\GCS\src\AGVView\SprayPanel.qml
-// import QtQuick
-// import QtQuick.Controls
-
-// Rectangle {
-//     anchors.fill:   parent
-//     color:          "#0d0d0d"
-
-//     readonly property string _accent: "#1ff18f"
-
-//     Row {
-//         anchors.fill:    parent
-//         anchors.margins: 12
-//         spacing:         10
-
-//         // ── A. Spray Type ─────────────────────────────────────
-//         Rectangle {
-//             width:  (parent.width - 40) / 5
-//             height: parent.height
-//             color:  Qt.rgba(1,1,1,0.02)
-//             radius: 6
-//             border.color: Qt.rgba(31/255,241/255,143/255,0.15)
-//             border.width: 1
-
-//             Column {
-//                 anchors.fill:    parent
-//                 anchors.margins: 10
-//                 spacing:         4
-
-//                 Row {
-//                     width: parent.width; height: 22; spacing: 6
-//                     Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-//                     Text { text: "SPRAY TYPE"; color: _accent; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 1.2; anchors.verticalCenter: parent.verticalCenter }
-//                 }
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Repeater {
-//                     model: ["Herbicide", "Pesticide", "Fungicide", "Liquid Fertilizer", "Custom"]
-//                     delegate: Rectangle {
-//                         width: parent.width
-//                         height: (parent.parent.height - 40) / 5
-//                         radius: 4
-//                         color:  sel ? Qt.rgba(31/255,241/255,143/255,0.08) : ma.containsMouse ? Qt.rgba(1,1,1,0.03) : "transparent"
-//                         property bool sel: false
-//                         Behavior on color { ColorAnimation { duration: 80 } }
-//                         Row {
-//                             anchors.verticalCenter: parent.verticalCenter; anchors.left: parent.left; anchors.leftMargin: 8; spacing: 8
-//                             Rectangle {
-//                                 width: 8; height: 8; radius: parent.parent.sel ? 2 : 4
-//                                 anchors.verticalCenter: parent.verticalCenter
-//                                 color: parent.parent.sel ? _accent : "transparent"
-//                                 border.color: parent.parent.sel ? _accent : Qt.rgba(1,1,1,0.25); border.width: 1
-//                                 Behavior on color  { ColorAnimation  { duration: 120 } }
-//                                 Behavior on radius { NumberAnimation { duration: 120 } }
-//                             }
-//                             Text { text: modelData; color: parent.parent.sel ? "#ffffff" : "#666666"; font.pixelSize: 11; Behavior on color { ColorAnimation { duration: 120 } } }
-//                         }
-//                         Text { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; text: "✓"; color: _accent; font.pixelSize: 10; visible: parent.sel }
-//                         MouseArea {
-//                             id: ma; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-//                             onClicked: { var c = parent.parent; for(var i=0;i<c.children.length;i++) c.children[i].sel=false; parent.sel=true }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-
-//         // ── B. Spray Mode ─────────────────────────────────────
-//         Rectangle {
-//             width:  (parent.width - 40) / 5
-//             height: parent.height
-//             color:  Qt.rgba(1,1,1,0.02)
-//             radius: 6
-//             border.color: Qt.rgba(31/255,241/255,143/255,0.15)
-//             border.width: 1
-
-//             Column {
-//                 anchors.fill:    parent
-//                 anchors.margins: 10
-//                 spacing:         4
-
-//                 Row {
-//                     width: parent.width; height: 22; spacing: 6
-//                     Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-//                     Text { text: "SPRAY MODE"; color: _accent; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 1.2; anchors.verticalCenter: parent.verticalCenter }
-//                 }
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Repeater {
-//                     model: ["Manual", "Autonomous", "A-B Mode"]
-//                     delegate: Rectangle {
-//                         width: parent.width
-//                         height: (parent.parent.height - 40) / 3
-//                         radius: 4
-//                         color:  sel ? Qt.rgba(31/255,241/255,143/255,0.08) : ma.containsMouse ? Qt.rgba(1,1,1,0.03) : "transparent"
-//                         property bool sel: false
-//                         Behavior on color { ColorAnimation { duration: 80 } }
-//                         Row {
-//                             anchors.verticalCenter: parent.verticalCenter; anchors.left: parent.left; anchors.leftMargin: 8; spacing: 8
-//                             Rectangle {
-//                                 width: 8; height: 8; radius: parent.parent.sel ? 2 : 4
-//                                 anchors.verticalCenter: parent.verticalCenter
-//                                 color: parent.parent.sel ? _accent : "transparent"
-//                                 border.color: parent.parent.sel ? _accent : Qt.rgba(1,1,1,0.25); border.width: 1
-//                                 Behavior on color  { ColorAnimation  { duration: 120 } }
-//                                 Behavior on radius { NumberAnimation { duration: 120 } }
-//                             }
-//                             Text { text: modelData; color: parent.parent.sel ? "#ffffff" : "#666666"; font.pixelSize: 11; Behavior on color { ColorAnimation { duration: 120 } } }
-//                         }
-//                         Text { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; text: "✓"; color: _accent; font.pixelSize: 10; visible: parent.sel }
-//                         MouseArea {
-//                             id: ma; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-//                             onClicked: { var c = parent.parent; for(var i=0;i<c.children.length;i++) c.children[i].sel=false; parent.sel=true }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-
-//         // ── C. Spray Parameters ───────────────────────────────
-//         Rectangle {
-//             width:  (parent.width - 40) / 5
-//             height: parent.height
-//             color:  Qt.rgba(1,1,1,0.02)
-//             radius: 6
-//             border.color: Qt.rgba(31/255,241/255,143/255,0.15)
-//             border.width: 1
-
-//             Column {
-//                 anchors.fill:    parent
-//                 anchors.margins: 10
-//                 spacing:         10
-
-//                 Row {
-//                     width: parent.width; height: 22; spacing: 6
-//                     Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-//                     Text { text: "SPRAY PARAMETERS"; color: _accent; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 1.2; anchors.verticalCenter: parent.verticalCenter }
-//                 }
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Column {
-//                     width: parent.width; spacing: 6
-//                     Row {
-//                         width: parent.width
-//                         Text { text: "Pump Speed"; color: "#888888"; font.pixelSize: 11; width: parent.width * 0.6 }
-//                         Text { anchors.right: parent.right; text: Math.round(pumpSlider.value) + " %"; color: _accent; font.pixelSize: 11; font.weight: Font.Medium }
-//                     }
-//                     Slider {
-//                         id: pumpSlider; width: parent.width; from: 0; to: 100; value: 50; height: 20
-//                         background: Rectangle {
-//                             x: pumpSlider.leftPadding; y: pumpSlider.topPadding + pumpSlider.availableHeight/2 - height/2
-//                             width: pumpSlider.availableWidth; height: 3; radius: 2; color: Qt.rgba(1,1,1,0.1)
-//                             Rectangle { width: pumpSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: _accent }
-//                         }
-//                         handle: Rectangle {
-//                             x: pumpSlider.leftPadding + pumpSlider.visualPosition * (pumpSlider.availableWidth - width)
-//                             y: pumpSlider.topPadding + pumpSlider.availableHeight/2 - height/2
-//                             width: 14; height: 14; radius: 7
-//                             color: pumpSlider.pressed ? _accent : "#1a1a1a"; border.color: _accent; border.width: 2
-//                         }
-//                     }
-//                 }
-
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Item {
-//                     width: parent.width; height: 30
-//                     Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Variable Spray"; color: "#888888"; font.pixelSize: 11 }
-//                     Rectangle {
-//                         id: sprayTrack
-//                         anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-//                         width: 36; height: 18; radius: 9
-//                         color: sprayOn ? Qt.rgba(31/255,241/255,143/255,0.5) : Qt.rgba(1,1,1,0.1)
-//                         property bool sprayOn: false
-//                         Behavior on color { ColorAnimation { duration: 150 } }
-//                         Rectangle {
-//                             width: 14; height: 14; radius: 7; y: 2
-//                             x: sprayTrack.sprayOn ? parent.width - width - 2 : 2
-//                             color: sprayTrack.sprayOn ? _accent : "#555555"
-//                             Behavior on x     { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
-//                             Behavior on color { ColorAnimation  { duration: 150 } }
-//                         }
-//                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sprayTrack.sprayOn = !sprayTrack.sprayOn }
-//                     }
-//                 }
-//             }
-//         }
-
-//         // ── D. Field & Navigation ─────────────────────────────
-//         Rectangle {
-//             width:  (parent.width - 40) / 5
-//             height: parent.height
-//             color:  Qt.rgba(1,1,1,0.02)
-//             radius: 6
-//             border.color: Qt.rgba(31/255,241/255,143/255,0.15)
-//             border.width: 1
-
-//             Column {
-//                 anchors.fill:    parent
-//                 anchors.margins: 10
-//                 spacing:         6
-
-//                 Row {
-//                     width: parent.width; height: 22; spacing: 6
-//                     Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-//                     Text { text: "FIELD & NAVIGATION"; color: _accent; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 1.2; anchors.verticalCenter: parent.verticalCenter }
-//                 }
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Repeater {
-//                     model: ["Select Saved Field", "Create New Field", "Auto Path Planning"]
-//                     delegate: Rectangle {
-//                         width: parent.width
-//                         height: (parent.parent.height - 50) / 3
-//                         radius: 4
-//                         color: bm.pressed ? Qt.rgba(31/255,241/255,143/255,0.15) : bm.containsMouse ? Qt.rgba(1,1,1,0.05) : "transparent"
-//                         border.color: bm.containsMouse ? Qt.rgba(31/255,241/255,143/255,0.4) : Qt.rgba(1,1,1,0.08); border.width: 1
-//                         Behavior on color        { ColorAnimation { duration: 80 } }
-//                         Behavior on border.color { ColorAnimation { duration: 80 } }
-//                         Text {
-//                             anchors.verticalCenter: parent.verticalCenter; anchors.left: parent.left; anchors.leftMargin: 10
-//                             text: modelData; font.pixelSize: 11
-//                             color: bm.containsMouse ? _accent : "#777777"
-//                             Behavior on color { ColorAnimation { duration: 80 } }
-//                         }
-//                         Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: "›"; color: _accent; font.pixelSize: 14; visible: bm.containsMouse }
-//                         MouseArea { id: bm; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: console.log(modelData) }
-//                     }
-//                 }
-//             }
-//         }
-
-//         // ── E. Advanced Settings ──────────────────────────────
-//         Rectangle {
-//             width:  (parent.width - 40) / 5
-//             height: parent.height
-//             color:  Qt.rgba(1,1,1,0.02)
-//             radius: 6
-//             border.color: Qt.rgba(31/255,241/255,143/255,0.15)
-//             border.width: 1
-
-//             Column {
-//                 anchors.fill:    parent
-//                 anchors.margins: 10
-//                 spacing:         6
-
-//                 Row {
-//                     width: parent.width; height: 22; spacing: 6
-//                     Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-//                     Text { text: "ADVANCED SETTINGS"; color: _accent; font.pixelSize: 9; font.weight: Font.Bold; font.letterSpacing: 1.2; anchors.verticalCenter: parent.verticalCenter }
-//                 }
-//                 Rectangle { width: parent.width; height: 1; color: Qt.rgba(1,1,1,0.06) }
-
-//                 Rectangle {
-//                     width: parent.width; height: 36; radius: 4
-//                     color: logM.pressed ? Qt.rgba(31/255,241/255,143/255,0.15) : logM.containsMouse ? Qt.rgba(1,1,1,0.05) : "transparent"
-//                     border.color: logM.containsMouse ? Qt.rgba(31/255,241/255,143/255,0.4) : Qt.rgba(1,1,1,0.08); border.width: 1
-//                     Behavior on color        { ColorAnimation { duration: 80 } }
-//                     Behavior on border.color { ColorAnimation { duration: 80 } }
-//                     Text {
-//                         anchors.verticalCenter: parent.verticalCenter; anchors.left: parent.left; anchors.leftMargin: 10
-//                         text: "Spray Logging & Report"; font.pixelSize: 11
-//                         color: logM.containsMouse ? _accent : "#777777"
-//                         Behavior on color { ColorAnimation { duration: 80 } }
-//                     }
-//                     Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: "›"; color: _accent; font.pixelSize: 14; visible: logM.containsMouse }
-//                     MouseArea { id: logM; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-//===========================================================
-//===========================================================
-//===========================================================
-//===========================================================
-//===========================================================
-//===========================================================
 // C:\NestLink\GCS\src\AGVView\SprayPanel.qml
 import QtQuick
 import QtQuick.Controls
 
 Rectangle {
     id: root
-    anchors.fill:   parent
-    color:          "#0d0d0d"
+    color: "#0d0d0d"
 
     property bool   missionActive: false
     property bool   locked:        false
-    property string _accent:       "#1ff18f"
+    property string _ac:           "#1ff18f"
+    property alias st_fieldAction: st.fieldAction
+    property alias st_logging:     st.logging
+    // property var th       // receives agvView.th
+    // property bool darkTheme: true
 
     signal missionStartRequested
     signal missionStopRequested
 
-    // ── State ─────────────────────────────────────────────────────────────────
     QtObject {
-        id: state
+        id: st
         property int  sprayType:   -1
         property int  sprayMode:   -1
         property real pumpSpeed:    50
         property bool varSpray:     false
         property int  fieldAction: -1
         property bool logging:      true
-
-        function clear() {
-            sprayType   = -1; sprayMode = -1
-            fieldAction = -1; pumpSpeed = 50; varSpray = false
-        }
+        function clear() { sprayType=-1; sprayMode=-1; fieldAction=-1; pumpSpeed=50; varSpray=false }
     }
 
-    property bool _ready: state.sprayType >= 0 && state.sprayMode >= 0 && state.fieldAction >= 0
+    property bool _ready: st.sprayType >= 0 && st.sprayMode >= 0 && st.fieldAction >= 0
 
-    // ── Layout ────────────────────────────────────────────────────────────────
-    Column {
+    // Column {
+    Item {
         anchors.fill: parent
-        spacing: 0
 
-        // Content row
+        // Main content area
         Row {
-            width: parent.width
-            height: parent.height - actionBar.height
-            spacing: 8
-            padding: 10
+            anchors.top:    parent.top
+            anchors.left:   parent.left
+            anchors.right:  parent.right
+            anchors.bottom: actionBar.top   // ← key: stop at action bar top
+            spacing: 0
 
-            // A+B ── Spray Type & Mode
+            // A. Spray Type (30%)
             Rectangle {
-                width:  (parent.width - 2 * 10 - 3 * 8) * 0.24
-                height: parent.height - 20
-                color:  (state.sprayType >= 0 && state.sprayMode >= 0) ? Qt.rgba(31,241,143,0.04) : Qt.rgba(255,255,255,0.025)
-                border.color: (state.sprayType >= 0 && state.sprayMode >= 0) ? Qt.rgba(31,241,143,0.3) : Qt.rgba(255,255,255,0.07)
+                width: parent.width * 0.30
+                height: parent.height
+                color: st.sprayType >= 0 ? Qt.rgba(31/255,241/255,143/255,0.04) : "#0d0d0d"
+                border.color: st.sprayType >= 0 ? Qt.rgba(31/255,241/255,143/255,0.35) : Qt.rgba(255,255,255,0.07)
                 border.width: 1
-                radius: 10
-                clip: true
-                Behavior on color        { ColorAnimation { duration: 250 } }
-                Behavior on border.color { ColorAnimation { duration: 250 } }
+                Behavior on color        { ColorAnimation { duration: 200 } }
+                Behavior on border.color { ColorAnimation { duration: 200 } }
 
-                Flickable {
+                Column {
                     anchors.fill: parent
                     anchors.margins: 12
-                    contentHeight: panelAB.implicitHeight
-                    clip: true
+                    spacing: 8
 
-                    Column {
-                        id: panelAB
+                    // Header
+                    Row {
                         width: parent.width
-                        spacing: 0
-
-                        AGVChipGroup {
-                            width: parent.width
-                            label: "SPRAY TYPE"; icon: "💧"
-                            options: ["Herbicide", "Pesticide", "Fungicide", "Liquid Fert.", "Custom"]
-                            selected: state.sprayType
-                            locked: root.locked
-                            accent: _accent
-                            onSelectionChanged: (i) => state.sprayType = i
-                        }
-
-                        // Divider
-                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(31/255,241/255,143/255,0.07);
-                            // margin: 10
-                            anchors.topMargin: 10
-                        }
-
-                        Item { width: 1; height: 10 }
-
-                        AGVChipGroup {
-                            width: parent.width
-                            label: "SPRAY MODE"; icon: "⚙️"
-                            options: ["Manual", "Autonomous", "A-B Mode"]
-                            selected: state.sprayMode
-                            locked: root.locked
-                            accent: _accent
-                            onSelectionChanged: (i) => state.sprayMode = i
+                        spacing: 8
+                        Rectangle { width: 3; height: 16; radius: 2; color: _ac; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: "💧"; font.pixelSize: 16; anchors.verticalCenter: parent.verticalCenter }
+                        Text {
+                            text: "SPRAY TYPE"
+                            color: st.sprayType >= 0 ? _ac : Qt.rgba(255,255,255,0.5)
+                            font.pixelSize: 9; font.weight: Font.ExtraBold
+                            font.letterSpacing: 1.5; font.family: "Courier New"
+                            anchors.verticalCenter: parent.verticalCenter
+                            Behavior on color { ColorAnimation { duration: 200 } }
                         }
                     }
-                }
-            }
 
-            // C ── Spray Parameters
-            Rectangle {
-                width:  (parent.width - 2 * 10 - 3 * 8) * 0.20
-                height: parent.height - 20
-                color:  Qt.rgba(31/255,241/255,143/255,0.025)
-                border.color: Qt.rgba(31/255,241/255,143/255,0.07); border.width: 1
-                radius: 10
-                clip: true
-
-                Flickable {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    contentHeight: panelC.implicitHeight
-                    clip: true
-
-                    Column {
-                        id: panelC
+                    // Options
+                    Grid {
                         width: parent.width
-                        spacing: 0
+                        columns: 2
+                        spacing: 6
 
-                        // Section header
-                        Row {
-                            spacing: 7; height: 28
-                            Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-                            Text { text: "🔧"; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter }
-                            Text {
-                                text: "SPRAY PARAMETERS"; color: _accent
-                                font.pixelSize: 8; font.weight: Font.ExtraBold; font.letterSpacing: 2; font.family: "Courier New"
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-                        }
-
-                        // Pump Speed
-                        Row {
-                            width: parent.width; height: 20
-                            Text { text: "⟳  Pump Speed"; color: Qt.rgba(255,255,255,0.6); font.pixelSize: 10; anchors.verticalCenter: parent.verticalCenter; width: parent.width * 0.7 }
-                            Rectangle {
-                                anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                                width: 52; height: 22; radius: 5
-                                color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.width: 1
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: Math.round(state.pumpSpeed) + "%"
-                                    color: _accent; font.pixelSize: 11; font.weight: Font.Bold; font.family: "Courier New"
-                                }
-                            }
-                        }
-
-                        Item { height: 6; width: 1 }
-
-                        Slider {
-                            id: pumpSlider
-                            width: parent.width; from: 0; to: 100; value: state.pumpSpeed; height: 20
-                            enabled: !root.locked
-                            onValueChanged: state.pumpSpeed = value
-                            background: Rectangle {
-                                x: pumpSlider.leftPadding; y: pumpSlider.topPadding + pumpSlider.availableHeight/2 - height/2
-                                width: pumpSlider.availableWidth; height: 3; radius: 2; color: Qt.rgba(255,255,255,0.1)
-                                Rectangle { width: pumpSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: _accent }
-                            }
-                            handle: Rectangle {
-                                x: pumpSlider.leftPadding + pumpSlider.visualPosition * (pumpSlider.availableWidth - width)
-                                y: pumpSlider.topPadding + pumpSlider.availableHeight/2 - height/2
-                                width: 16; height: 16; radius: 8
-                                color: pumpSlider.pressed ? _accent : "#111a14"; border.color: _accent; border.width: 2
-                            }
-                        }
-
-                        Item { height: 10; width: 1 }
-                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(255,255,255,0.07) }
-                        Item { height: 10; width: 1 }
-
-                        // Variable Spray toggle
-                        Row {
-                            width: parent.width; height: 30
-                            Row {
-                                spacing: 6; anchors.verticalCenter: parent.verticalCenter
-                                Text { text: "〰️"; font.pixelSize: 12 }
-                                Text { text: "Variable Spray"; color: Qt.rgba(255,255,255,0.6); font.pixelSize: 10 }
-                            }
-                            Rectangle {
-                                id: varTrack
-                                anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                                width: 38; height: 19; radius: 10
-                                color: state.varSpray ? Qt.rgba(31,241,143,0.4) : Qt.rgba(255,255,255,0.1)
-                                border.color: state.varSpray ? _accent : Qt.rgba(255,255,255,0.12); border.width: 1
-                                Behavior on color        { ColorAnimation { duration: 150 } }
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
-                                Rectangle {
-                                    width: 15; height: 15; radius: 8; y: 2
-                                    x: state.varSpray ? parent.width - width - 2 : 2
-                                    color: state.varSpray ? _accent : "#555555"
-                                    Behavior on x     { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
-                                    Behavior on color { ColorAnimation  { duration: 150 } }
-                                }
-                                MouseArea {
-                                    anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: if (!root.locked) state.varSpray = !state.varSpray
-                                }
-                            }
-                        }
-
-                        Item { height: 10; width: 1 }
-                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(255,255,255,0.07) }
-                        Item { height: 10; width: 1 }
-
-                        // Live readout
-                        Rectangle {
-                            width: parent.width; height: 60; radius: 7
-                            color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.width: 1
-
-                            Row {
-                                anchors.fill: parent; anchors.margins: 10
-
-                                Column {
-                                    width: parent.width / 2; spacing: 3; anchors.verticalCenter: parent.verticalCenter
-                                    Text { text: "FLOW RATE"; color: Qt.rgba(255,255,255,0.38); font.pixelSize: 8; font.letterSpacing: 1 }
-                                    Row {
-                                        spacing: 3
-                                        Text { text: (state.pumpSpeed * 0.08).toFixed(1); color: _accent; font.pixelSize: 14; font.weight: Font.Bold; font.family: "Courier New" }
-                                        Text { text: "L/min"; color: Qt.rgba(255,255,255,0.4); font.pixelSize: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 2 }
-                                    }
-                                }
-
-                                Rectangle { width: 1; height: parent.height - 16; color: Qt.rgba(255,255,255,0.1); anchors.verticalCenter: parent.verticalCenter }
-
-                                Column {
-                                    width: parent.width / 2 - 20; spacing: 3; anchors.verticalCenter: parent.verticalCenter
-                                    anchors.left: parent.left; anchors.leftMargin: parent.width / 2 + 10
-                                    Text { text: "PRESSURE"; color: Qt.rgba(255,255,255,0.38); font.pixelSize: 8; font.letterSpacing: 1 }
-                                    Row {
-                                        spacing: 3
-                                        Text { text: (state.pumpSpeed * 0.03 + 0.5).toFixed(1); color: _accent; font.pixelSize: 14; font.weight: Font.Bold; font.family: "Courier New" }
-                                        Text { text: "bar"; color: Qt.rgba(255,255,255,0.4); font.pixelSize: 10; anchors.bottom: parent.bottom; anchors.bottomMargin: 2 }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // D ── Field & Navigation
-            Rectangle {
-                width:  (parent.width - 2 * 10 - 3 * 8) * 0.26
-                height: parent.height - 20
-                color:  state.fieldAction >= 0 ? Qt.rgba(31,241,143,0.04) : Qt.rgba(255,255,255,0.025)
-                border.color: state.fieldAction >= 0 ? Qt.rgba(31,241,143,0.3) : Qt.rgba(255,255,255,0.07)
-                border.width: 1; radius: 10; clip: true
-                Behavior on color        { ColorAnimation { duration: 250 } }
-                Behavior on border.color { ColorAnimation { duration: 250 } }
-
-                Flickable {
-                    anchors.fill: parent; anchors.margins: 12
-                    contentHeight: panelD.implicitHeight; clip: true
-
-                    Column {
-                        id: panelD
-                        width: parent.width; spacing: 10
-
-                        Row {
-                            spacing: 7; height: 28
-                            Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-                            Text { text: "🗺️"; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter }
-                            Text {
-                                text: "FIELD & NAVIGATION"
-                                color: state.fieldAction >= 0 ? _accent : "white"
-                                font.pixelSize: 8; font.weight: Font.ExtraBold; font.letterSpacing: 2; font.family: "Courier New"
-                                anchors.verticalCenter: parent.verticalCenter
-                                Behavior on color { ColorAnimation { duration: 200 } }
-                            }
-                        }
-
-                        AGVOptionCards {
-                            width: parent.width
-                            accent: _accent
-                            locked: root.locked
-                            selected: state.fieldAction
-                            options: [
-                                { icon: "📂", label: "Select Saved Field",  sub: "Load existing boundary" },
-                                { icon: "✏️", label: "Create New Field",    sub: "Draw field boundary"    },
-                                { icon: "🛰️", label: "Auto Path Planning",  sub: "Generate optimal route" }
+                        Repeater {
+                            model: [
+                                { icon: "🧴", label: "Herbicide" },
+                                { icon: "🐛", label: "Pesticide" },
+                                { icon: "🍄", label: "Fungicide" },
+                                { icon: "💊", label: "Liquid Fert." }
                             ]
-                            onSelectionChanged: (i) => state.fieldAction = i
+                            delegate: BigOptionBtn {
+                                width: (parent.width - 6) / 2   // 2 items, 1 gap of 6px
+                                optIcon: modelData.icon
+                                optLabel: modelData.label
+                                // th: agvView.th
+                                active: st.sprayType === index
+                                lk: root.locked
+                                ac: _ac
+                                onTapped: st.sprayType = (st.sprayType === index ? -1 : index)
+                            }
                         }
                     }
                 }
             }
 
-            // E ── Advanced + Status
+            Rectangle { width: 1; height: parent.height; color: Qt.rgba(255,255,255,0.06) }
+
+            // B. Spray Mode (30%)
             Rectangle {
-                width: parent.width - 2 * 10 - 3 * 8
-                       - (parent.width - 2 * 10 - 3 * 8) * 0.24
-                       - (parent.width - 2 * 10 - 3 * 8) * 0.20
-                       - (parent.width - 2 * 10 - 3 * 8) * 0.26
-                       - 3 * 8   // remaining after other panels and their spacing consumed
-                height: parent.height - 20
-                color:  Qt.rgba(255,255,255,0.025)
-                border.color: Qt.rgba(255,255,255,0.07); border.width: 1; radius: 10; clip: true
+                width: parent.width * 0.30
+                height: parent.height
+                color: st.sprayMode >= 0 ? Qt.rgba(31/255,241/255,143/255,0.04) : "#0d0d0d"
+                border.color: st.sprayMode >= 0 ? Qt.rgba(31/255,241/255,143/255,0.35) : Qt.rgba(255,255,255,0.07)
+                border.width: 1
+                Behavior on color        { ColorAnimation { duration: 200 } }
+                Behavior on border.color { ColorAnimation { duration: 200 } }
 
-                // Simpler: just use Layout.fillWidth equivalent by computing leftover
-                Component.onCompleted: {
-                    // width is auto via Row stretch; nothing to do
-                }
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 8
 
-                Flickable {
-                    anchors.fill: parent; anchors.margins: 12
-                    contentHeight: panelE.implicitHeight; clip: true
-
-                    Column {
-                        id: panelE
-                        width: parent.width; spacing: 0
-
-                        Row {
-                            spacing: 7; height: 28
-                            Rectangle { width: 3; height: 14; radius: 2; color: _accent; anchors.verticalCenter: parent.verticalCenter }
-                            Text { text: "⚗️"; font.pixelSize: 12; anchors.verticalCenter: parent.verticalCenter }
-                            Text {
-                                text: "ADVANCED SETTINGS"; color: _accent
-                                font.pixelSize: 8; font.weight: Font.ExtraBold; font.letterSpacing: 2; font.family: "Courier New"
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
+                    Row {
+                        width: parent.width
+                        spacing: 8
+                        Rectangle { width: 3; height: 16; radius: 2; color: _ac; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: "⚙️"; font.pixelSize: 16; anchors.verticalCenter: parent.verticalCenter }
+                        Text {
+                            text: "SPRAY MODE"
+                            color: st.sprayMode >= 0 ? _ac : Qt.rgba(255,255,255,0.5)
+                            font.pixelSize: 9; font.weight: Font.ExtraBold
+                            font.letterSpacing: 1.5; font.family: "Courier New"
+                            anchors.verticalCenter: parent.verticalCenter
+                            Behavior on color { ColorAnimation { duration: 200 } }
                         }
+                    }
 
-                        // Logging toggle
-                        Row {
-                            width: parent.width; height: 30
-                            Row { spacing: 6; anchors.verticalCenter: parent.verticalCenter
-                                Text { text: "📋"; font.pixelSize: 12 }
-                                Text { text: "Spray Logging"; color: Qt.rgba(255,255,255,0.6); font.pixelSize: 10 }
-                            }
-                            Rectangle {
-                                id: logTrack
-                                anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                                width: 38; height: 19; radius: 10
-                                color: state.logging ? Qt.rgba(31,241,143,0.4) : Qt.rgba(255,255,255,0.1)
-                                border.color: state.logging ? _accent : Qt.rgba(255,255,255,0.12); border.width: 1
-                                Behavior on color        { ColorAnimation { duration: 150 } }
-                                Behavior on border.color { ColorAnimation { duration: 150 } }
-                                Rectangle {
-                                    width: 15; height: 15; radius: 8; y: 2
-                                    x: state.logging ? parent.width - width - 2 : 2
-                                    color: state.logging ? _accent : "#555555"
-                                    Behavior on x     { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
-                                    Behavior on color { ColorAnimation  { duration: 150 } }
-                                }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: state.logging = !state.logging }
-                            }
-                        }
+                    // Options
+                    Grid {
+                        width: parent.width
+                        columns: 2
+                        spacing: 6
 
-                        // PDF Report button
-                        Rectangle {
-                            width: parent.width; height: 34; radius: 7
-                            color: reportMouse.containsMouse ? Qt.rgba(255,255,255,0.05) : Qt.rgba(255,255,255,0.03)
-                            border.color: Qt.rgba(255,255,255,0.08); border.width: 1
-                            Behavior on color { ColorAnimation { duration: 80 } }
-                            Row {
-                                anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 7
-                                Text { text: "📊"; font.pixelSize: 14 }
-                                Text { text: "Generate PDF Report"; color: Qt.rgba(255,255,255,0.6); font.pixelSize: 11 }
-                            }
-                            Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: "›"; color: _accent; font.pixelSize: 14 }
-                            MouseArea { id: reportMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: console.log("generate report") }
-                        }
-
-                        Item { height: 10; width: 1 }
-                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(255,255,255,0.07) }
-                        Item { height: 8; width: 1 }
-
-                        AGVStatRow { width: parent.width; label: "Coverage";     value: root.missionActive ? "18%"   : "--"; accent: _accent }
-                        
-                        // Coverage bar
-                        Rectangle {
-                            width: parent.width; height: 4; radius: 2
-                            color: Qt.rgba(255,255,255,0.08)
-                            Rectangle {
-                                width: root.missionActive ? parent.width * 0.18 : 0
-                                height: parent.height; radius: 2; color: _accent
-                                Behavior on width { NumberAnimation { duration: 600 } }
-                            }
-                        }
-
-                        Item { height: 6; width: 1 }
-
-                        AGVStatRow { width: parent.width; label: "Chemical Used"; value: root.missionActive ? "12.5 Lt" : "--"; accent: _accent }
-                        AGVStatRow { width: parent.width; label: "Tank Level";    value: root.missionActive ? "75%"    : "--"; accent: _accent }
-
-                        Item { height: 8; width: 1 }
-                        Rectangle { width: parent.width; height: 1; color: Qt.rgba(255,255,255,0.07) }
-                        Item { height: 8; width: 1 }
-
-                        Rectangle {
-                            width: parent.width; height: 30; radius: 7
-                            color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.color: Qt.rgba(31/255, 241/255, 143/255, 0.04); border.width: 1
-                            Row {
-                                anchors.left: parent.left; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 6
-                                Text { text: "✅"; font.pixelSize: 12 }
-                                Text { text: "No Active Alerts"; color: Qt.rgba(255,255,255,0.38); font.pixelSize: 10 }
+                        Repeater {
+                            model: [
+                                { icon: "🕹️", label: "Manual" },
+                                { icon: "🤖", label: "Autonomous" },
+                                { icon: "📍", label: "A-B Mode" }
+                            ]
+                            delegate: BigOptionBtn {
+                                width: (parent.width - 6) / 2   // 2 items, 1 gap of 6px
+                                optIcon: modelData.icon
+                                optLabel: modelData.label
+                                active: st.sprayMode === index
+                                lk: root.locked
+                                ac: _ac
+                                // th: agvView.th
+                                onTapped: st.sprayMode = (st.sprayMode === index ? -1 : index)
                             }
                         }
                     }
                 }
             }
+
+            Rectangle { width: 1; height: parent.height; color: Qt.rgba(255,255,255,0.06) }
+
+            // C. Parameters
+            Rectangle {
+                width: parent.width * 0.40
+                height: parent.height
+                color: "#0d0d0d"
+                border.color: Qt.rgba(255,255,255,0.07)
+                border.width: 1
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 8
+
+                    // Header
+                    Row {
+                        width: parent.width
+                        spacing: 8
+                        Rectangle { width: 3; height: 14; radius: 2; color: _ac; anchors.verticalCenter: parent.verticalCenter }
+                        Text { text: "🔧"; font.pixelSize: 14; anchors.verticalCenter: parent.verticalCenter }
+                        Text {
+                            text: "PARAMETERS"
+                            color: Qt.rgba(255,255,255,0.5)
+                            font.pixelSize: 9; font.weight: Font.ExtraBold
+                            font.letterSpacing: 1.5; font.family: "Courier New"
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                    }
+
+                    // 2x2 Grid - fills remaining height after header
+                    Grid {
+                        width: parent.width
+                        height: parent.height - 30  // subtract header height + spacing
+                        columns: 2
+                        columnSpacing: 6
+                        rowSpacing: 6
+
+                        // Pump Speed card
+                        Rectangle {
+                            width:  (parent.width - 6) / 2
+                            height: (parent.height - 6) / 2
+                            radius: 8
+                            color: Qt.rgba(255,255,255,0.03)
+                            border.color: Qt.rgba(255,255,255,0.08); border.width: 1
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "⟳  PUMP SPEED"
+                                    color: Qt.rgba(255,255,255,0.4)
+                                    font.pixelSize: 9; font.weight: Font.Bold
+                                    font.letterSpacing: 1; font.family: "Courier New"
+                                }
+
+                                Text {
+                                    text: Math.round(pumpSl.value) + "%"
+                                    color: _ac
+                                    font.pixelSize: 16; font.weight: Font.Bold; font.family: "Courier New"
+                                }
+
+                                Slider {
+                                    id: pumpSl
+                                    width: parent.width
+                                    from: 0; to: 100; value: st.pumpSpeed
+                                    height: 16
+                                    enabled: !root.locked
+                                    onValueChanged: st.pumpSpeed = value
+
+                                    background: Rectangle {
+                                        x: pumpSl.leftPadding
+                                        y: pumpSl.topPadding + pumpSl.availableHeight/2 - height/2
+                                        width: pumpSl.availableWidth; height: 3; radius: 2
+                                        color: Qt.rgba(255,255,255,0.1)
+                                        Rectangle {
+                                            width: pumpSl.visualPosition * parent.width
+                                            height: parent.height; radius: 2; color: _ac
+                                        }
+                                    }
+
+                                    handle: Rectangle {
+                                        x: pumpSl.leftPadding + pumpSl.visualPosition * (pumpSl.availableWidth - width)
+                                        y: pumpSl.topPadding  + pumpSl.availableHeight/2 - height/2
+                                        width: 12; height: 12; radius: 6
+                                        color: pumpSl.pressed ? _ac : "#0f1a14"
+                                        border.color: _ac; border.width: 2
+                                        Behavior on color { ColorAnimation { duration: 100 } }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Flow Rate card
+                        Rectangle {
+                            width:  (parent.width - 6) / 2
+                            height: (parent.height - 6) / 2
+                            radius: 8
+                            color: Qt.rgba(31/255,241/255,143/255,0.05)
+                            border.color: Qt.rgba(31/255,241/255,143/255,0.15); border.width: 1
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "💧  FLOW RATE"
+                                    color: Qt.rgba(255,255,255,0.4)
+                                    font.pixelSize: 9; font.weight: Font.Bold
+                                    font.letterSpacing: 1; font.family: "Courier New"
+                                }
+
+                                Row {
+                                    spacing: 3
+                                    Text {
+                                        text: (st.pumpSpeed * 0.08).toFixed(1)
+                                        color: _ac; font.pixelSize: 16; font.weight: Font.Bold; font.family: "Courier New"
+                                    }
+                                    Text {
+                                        text: "L/min"; color: Qt.rgba(255,255,255,0.4); font.pixelSize: 9
+                                        anchors.bottom: parent.bottom; anchors.bottomMargin: 1
+                                    }
+                                }
+                            }
+                        }
+
+                        // Variable Spray card
+                        Rectangle {
+                            width:  (parent.width - 6) / 2
+                            height: (parent.height - 6) / 2
+                            radius: 8
+                            color: st.varSpray ? Qt.rgba(31/255,241/255,143/255,0.06) : Qt.rgba(255,255,255,0.03)
+                            border.color: st.varSpray ? Qt.rgba(31/255,241/255,143/255,0.3) : Qt.rgba(255,255,255,0.08)
+                            border.width: 1
+                            Behavior on color        { ColorAnimation { duration: 150 } }
+                            Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "〰️  VARIABLE SPRAY"
+                                    color: Qt.rgba(255,255,255,0.4)
+                                    font.pixelSize: 9; font.weight: Font.Bold
+                                    font.letterSpacing: 1; font.family: "Courier New"
+                                }
+
+                                Rectangle {
+                                    width: 38; height: 20; radius: 10
+                                    color: st.varSpray ? Qt.rgba(31/255,241/255,143/255,0.4) : Qt.rgba(255,255,255,0.1)
+                                    border.color: st.varSpray ? _ac : Qt.rgba(255,255,255,0.12); border.width: 1
+                                    Behavior on color        { ColorAnimation { duration: 150 } }
+                                    Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                                    Rectangle {
+                                        width: 14; height: 14; radius: 7; y: 3
+                                        x: st.varSpray ? parent.width - width - 3 : 3
+                                        color: st.varSpray ? _ac : "#666666"
+                                        Behavior on x     { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
+                                        Behavior on color { ColorAnimation  { duration: 150 } }
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                        onClicked: if (!root.locked) st.varSpray = !st.varSpray
+                                    }
+                                }
+                            }
+                        }
+
+                        // Pressure card
+                        Rectangle {
+                            width:  (parent.width - 6) / 2
+                            height: (parent.height - 6) / 2
+                            radius: 8
+                            color: Qt.rgba(31/255,241/255,143/255,0.05)
+                            border.color: Qt.rgba(31/255,241/255,143/255,0.15); border.width: 1
+
+                            Column {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                spacing: 4
+
+                                Text {
+                                    text: "🔵  PRESSURE"
+                                    color: Qt.rgba(255,255,255,0.4)
+                                    font.pixelSize: 9; font.weight: Font.Bold
+                                    font.letterSpacing: 1; font.family: "Courier New"
+                                }
+
+                                Row {
+                                    spacing: 3
+                                    Text {
+                                        text: (st.pumpSpeed * 0.03 + 0.5).toFixed(1)
+                                        color: _ac; font.pixelSize: 16; font.weight: Font.Bold; font.family: "Courier New"
+                                    }
+                                    Text {
+                                        text: "bar"; color: Qt.rgba(255,255,255,0.4); font.pixelSize: 9
+                                        anchors.bottom: parent.bottom; anchors.bottomMargin: 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle { width: 1; height: parent.height; color: Qt.rgba(255,255,255,0.06) }
+
+            // // D. Field & Navigation (24%)
+            // Rectangle {
+            //     width: parent.width * 0.24
+            //     height: parent.height
+            //     color: st.fieldAction >= 0 ? Qt.rgba(31/255,241/255,143/255,0.04) : "#0d0d0d"
+            //     border.color: st.fieldAction >= 0 ? Qt.rgba(31/255,241/255,143/255,0.35) : Qt.rgba(255,255,255,0.07)
+            //     border.width: 1
+            //     Behavior on color        { ColorAnimation { duration: 200 } }
+            //     Behavior on border.color { ColorAnimation { duration: 200 } }
+
+            //     Column {
+            //         anchors.fill: parent
+            //         anchors.margins: 12
+            //         spacing: 8
+
+            //         Row {
+            //             width: parent.width
+            //             spacing: 8
+            //             Rectangle { width: 3; height: 16; radius: 2; color: _ac; anchors.verticalCenter: parent.verticalCenter }
+            //             Text { text: "🗺️"; font.pixelSize: 16; anchors.verticalCenter: parent.verticalCenter }
+            //             Text {
+            //                 text: "FIELD & NAV"
+            //                 color: st.fieldAction >= 0 ? _ac : Qt.rgba(255,255,255,0.5)
+            //                 font.pixelSize: 9; font.weight: Font.ExtraBold
+            //                 font.letterSpacing: 1.5; font.family: "Courier New"
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //                 Behavior on color { ColorAnimation { duration: 200 } }
+            //             }
+            //         }
+
+            //         Repeater {
+            //             model: [
+            //                 { icon: "📂", label: "Select Saved Field", sub: "Load boundary" },
+            //                 { icon: "✏️", label: "Create New Field", sub: "Draw boundary" },
+            //                 { icon: "🛰️", label: "Auto Path Planning", sub: "Optimal route" }
+            //             ]
+            //             delegate: Rectangle {
+            //                 property bool act: st.fieldAction === index
+            //                 width: parent.width
+            //                 height: 50
+            //                 radius: 8
+            //                 color: act ? Qt.rgba(31/255,241/255,143/255,0.12) :
+            //                        fm.containsMouse && !root.locked ? Qt.rgba(255,255,255,0.06) :
+            //                        Qt.rgba(255,255,255,0.02)
+            //                 border.color: act ? _ac : Qt.rgba(255,255,255,0.08)
+            //                 border.width: act ? 2 : 1
+            //                 opacity: root.locked && !act ? 0.35 : 1
+            //                 Behavior on color        { ColorAnimation { duration: 100 } }
+            //                 Behavior on border.color { ColorAnimation { duration: 100 } }
+
+            //                 Row {
+            //                     anchors.left: parent.left
+            //                     anchors.leftMargin: 12
+            //                     anchors.verticalCenter: parent.verticalCenter
+            //                     spacing: 10
+
+            //                     Text {
+            //                         text: modelData.icon
+            //                         font.pixelSize: 20
+            //                         anchors.verticalCenter: parent.verticalCenter
+            //                     }
+
+            //                     Column {
+            //                         anchors.verticalCenter: parent.verticalCenter
+            //                         spacing: 2
+
+            //                         Text {
+            //                             text: modelData.label
+            //                             color: act ? "#ffffff" : Qt.rgba(255,255,255,0.7)
+            //                             font.pixelSize: 12
+            //                             font.weight: act ? Font.DemiBold : Font.Normal
+            //                             Behavior on color { ColorAnimation { duration: 100 } }
+            //                         }
+
+            //                         Text {
+            //                             text: modelData.sub
+            //                             color: Qt.rgba(255,255,255,0.35)
+            //                             font.pixelSize: 9
+            //                         }
+            //                     }
+            //                 }
+
+            //                 Rectangle {
+            //                     anchors.right: parent.right
+            //                     anchors.rightMargin: 12
+            //                     anchors.verticalCenter: parent.verticalCenter
+            //                     width: 20; height: 20; radius: 10
+            //                     color: act ? _ac : "transparent"
+            //                     border.color: act ? _ac : Qt.rgba(255,255,255,0.2)
+            //                     border.width: 1
+            //                     Behavior on color { ColorAnimation { duration: 100 } }
+
+            //                     Text {
+            //                         anchors.centerIn: parent
+            //                         text: "✓"
+            //                         color: act ? "#0f1a14" : Qt.rgba(255,255,255,0.15)
+            //                         font.pixelSize: 10
+            //                         font.weight: Font.Bold
+            //                     }
+            //                 }
+
+            //                 MouseArea {
+            //                     id: fm
+            //                     anchors.fill: parent
+            //                     hoverEnabled: true
+            //                     cursorShape: root.locked ? Qt.ForbiddenCursor : Qt.PointingHandCursor
+            //                     enabled: !root.locked
+            //                     onClicked: st.fieldAction = (st.fieldAction === index ? -1 : index)
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
+            // Rectangle { width: 1; height: parent.height; color: Qt.rgba(255,255,255,0.06) }
+
+            // // E. Advanced (remaining width)
+            // Rectangle {
+            //     width: parent.width - (parent.width * 0.20) - (parent.width * 0.18) - (parent.width * 0.22) - (parent.width * 0.24) - 4
+            //     height: parent.height
+            //     color: "#0d0d0d"
+            //     border.color: Qt.rgba(255,255,255,0.07)
+            //     border.width: 1
+
+            //     Column {
+            //         anchors.fill: parent
+            //         anchors.margins: 12
+            //         spacing: 8
+
+            //         Row {
+            //             width: parent.width
+            //             spacing: 8
+            //             Rectangle { width: 3; height: 16; radius: 2; color: _ac; anchors.verticalCenter: parent.verticalCenter }
+            //             Text { text: "⚗️"; font.pixelSize: 16; anchors.verticalCenter: parent.verticalCenter }
+            //             Text {
+            //                 text: "ADVANCED"
+            //                 color: Qt.rgba(255,255,255,0.5)
+            //                 font.pixelSize: 9; font.weight: Font.ExtraBold
+            //                 font.letterSpacing: 1.5; font.family: "Courier New"
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //             }
+            //         }
+
+            //         // Spray Logging
+            //         Rectangle {
+            //             width: parent.width
+            //             height: 48
+            //             radius: 8
+            //             color: Qt.rgba(255,255,255,0.03)
+            //             border.color: Qt.rgba(255,255,255,0.08)
+            //             border.width: 1
+
+            //             Row {
+            //                 anchors.left: parent.left
+            //                 anchors.leftMargin: 12
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //                 spacing: 10
+
+            //                 Text {
+            //                     text: "📋"
+            //                     font.pixelSize: 18
+            //                 }
+
+            //                 Column {
+            //                     anchors.verticalCenter: parent.verticalCenter
+            //                     spacing: 2
+
+            //                     Text {
+            //                         text: "Spray Logging"
+            //                         color: Qt.rgba(255,255,255,0.8)
+            //                         font.pixelSize: 12
+            //                         font.weight: Font.DemiBold
+            //                     }
+
+            //                     Text {
+            //                         text: "Record session data"
+            //                         color: Qt.rgba(255,255,255,0.35)
+            //                         font.pixelSize: 9
+            //                     }
+            //                 }
+            //             }
+
+            //             Rectangle {
+            //                 anchors.right: parent.right
+            //                 anchors.rightMargin: 12
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //                 width: 44; height: 24; radius: 12
+            //                 color: st.logging ? Qt.rgba(31/255,241/255,143/255,0.4) : Qt.rgba(255,255,255,0.1)
+            //                 border.color: st.logging ? _ac : Qt.rgba(255,255,255,0.12)
+            //                 border.width: 1
+            //                 Behavior on color        { ColorAnimation { duration: 150 } }
+            //                 Behavior on border.color { ColorAnimation { duration: 150 } }
+
+            //                 Rectangle {
+            //                     width: 18; height: 18; radius: 9; y: 3
+            //                     x: st.logging ? parent.width - width - 3 : 3
+            //                     color: st.logging ? _ac : "#666666"
+            //                     Behavior on x     { NumberAnimation { duration: 150; easing.type: Easing.InOutQuad } }
+            //                     Behavior on color { ColorAnimation  { duration: 150 } }
+            //                 }
+
+            //                 MouseArea {
+            //                     anchors.fill: parent
+            //                     cursorShape: Qt.PointingHandCursor
+            //                     onClicked: st.logging = !st.logging
+            //                 }
+            //             }
+            //         }
+
+            //         // PDF Report
+            //         Rectangle {
+            //             width: parent.width
+            //             height: 44
+            //             radius: 8
+            //             color: rM.containsMouse ? Qt.rgba(255,255,255,0.06) : Qt.rgba(255,255,255,0.02)
+            //             border.color: rM.containsMouse ? Qt.rgba(31/255,241/255,143/255,0.3) : Qt.rgba(255,255,255,0.08)
+            //             border.width: 1
+            //             Behavior on color        { ColorAnimation { duration: 80 } }
+            //             Behavior on border.color { ColorAnimation { duration: 80 } }
+
+            //             Row {
+            //                 anchors.left: parent.left
+            //                 anchors.leftMargin: 12
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //                 spacing: 10
+
+            //                 Text {
+            //                     text: "📊"
+            //                     font.pixelSize: 18
+            //                 }
+
+            //                 Text {
+            //                     text: "Generate PDF Report"
+            //                     color: rM.containsMouse ? "#ffffff" : Qt.rgba(255,255,255,0.65)
+            //                     font.pixelSize: 12
+            //                     Behavior on color { ColorAnimation { duration: 80 } }
+            //                 }
+            //             }
+
+            //             Text {
+            //                 anchors.right: parent.right
+            //                 anchors.rightMargin: 12
+            //                 anchors.verticalCenter: parent.verticalCenter
+            //                 text: "›"
+            //                 color: _ac
+            //                 font.pixelSize: 18
+            //             }
+
+            //             MouseArea {
+            //                 id: rM
+            //                 anchors.fill: parent
+            //                 hoverEnabled: true
+            //                 cursorShape: Qt.PointingHandCursor
+            //             }
+            //         }
+
+            //         Rectangle { width: parent.width; height: 1; color: Qt.rgba(255,255,255,0.06) }
+
+            //         // Stats
+            //         Repeater {
+            //             model: [
+            //                 { lbl: "Coverage", val: root.missionActive ? "18%" : "--" },
+            //                 { lbl: "Chemical Used", val: root.missionActive ? "12.5 Lt" : "--" },
+            //                 { lbl: "Tank Level", val: root.missionActive ? "75%" : "--" }
+            //             ]
+            //             delegate: Row {
+            //                 width: parent.width
+            //                 height: 26
+
+            //                 Text {
+            //                     text: modelData.lbl
+            //                     color: Qt.rgba(255,255,255,0.45)
+            //                     font.pixelSize: 11
+            //                     anchors.verticalCenter: parent.verticalCenter
+            //                     width: parent.width * 0.55
+            //                 }
+
+            //                 Text {
+            //                     anchors.right: parent.right
+            //                     anchors.verticalCenter: parent.verticalCenter
+            //                     text: modelData.val
+            //                     color: _ac
+            //                     font.pixelSize: 13
+            //                     font.weight: Font.Bold
+            //                     font.family: "Courier New"
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
-        // Action bar
+        Rectangle { width: 1; height: parent.height; color: Qt.rgba(255,255,255,0.06) }
+
+        // Action Bar (60px height)
         AGVActionBar {
             id: actionBar
-            width: parent.width
+            anchors.left:   parent.left
+            anchors.right:  parent.right
+            anchors.bottom: parent.bottom
+            // width: parent.width
+            height: 60
+            // anchors.bottom: parent.bottom
             ready: root._ready
             missionActive: root.missionActive
             locked: root.locked
             startLabel: "START SPRAY"
-            stopLabel:  "STOP SPRAY"
-            accent: _accent
-
-            onStartClicked:     root.missionStartRequested()
-            onStopClicked:      root.missionStopRequested()
-            onClearClicked:     state.clear()
+            stopLabel: "STOP SPRAY"
+            accent: _ac
+            onStartClicked: root.missionStartRequested()
+            onStopClicked: root.missionStopRequested()
+            onClearClicked: st.clear()
             onEmergencyClicked: root.missionStopRequested()
 
-            // Extra left: Prime Pump
             Rectangle {
-                property bool hovered: false
-                width: 130; height: 38; radius: 7
-                color:        hovered ? Qt.rgba(255,255,255,0.06) : Qt.rgba(255,255,255,0.03)
-                border.color: Qt.rgba(255,255,255,0.1); border.width: 1
-                Behavior on color { ColorAnimation { duration: 150 } }
+                property bool hov: false
+                width: 140
+                height: 42
+                radius: 8
+                color: hov ? Qt.rgba(255,255,255,0.08) : Qt.rgba(255,255,255,0.03)
+                border.color: Qt.rgba(255,255,255,0.12)
+                border.width: 1
+                Behavior on color { ColorAnimation { duration: 120 } }
+
                 Row {
-                    anchors.centerIn: parent; spacing: 6
-                    Text { text: "⟳"; font.pixelSize: 14; color: Qt.rgba(255,255,255,0.6); anchors.verticalCenter: parent.verticalCenter }
-                    Text { text: "Prime Pump"; color: Qt.rgba(255,255,255,0.6); font.pixelSize: 11; font.weight: Font.DemiBold; anchors.verticalCenter: parent.verticalCenter }
+                    anchors.centerIn: parent
+                    spacing: 8
+
+                    Text {
+                        text: "⟳"
+                        font.pixelSize: 18
+                        color: Qt.rgba(255,255,255,0.7)
+                    }
+
+                    Text {
+                        text: "Prime Pump"
+                        color: Qt.rgba(255,255,255,0.7)
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                    }
                 }
+
                 MouseArea {
-                    anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                    onEntered: parent.hovered = true; onExited: parent.hovered = false
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: parent.hov = true
+                    onExited: parent.hov = false
                     onClicked: console.log("prime pump")
                 }
             }
         }
     }
 }
-

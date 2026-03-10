@@ -3,6 +3,7 @@ import QtQuick
 
 Item {
     property string label: ""
+    // property QtObject th:         null
 
     height: 32
 
@@ -10,7 +11,7 @@ Item {
         anchors.left:           parent.left
         anchors.verticalCenter: parent.verticalCenter
         text:                   label
-        color:                  "#aaaaaa"
+        color:                 "#aaaaaa"
         font.pixelSize:         12
     }
 

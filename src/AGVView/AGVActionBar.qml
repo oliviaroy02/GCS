@@ -24,7 +24,7 @@ Rectangle {
     signal clearClicked
     signal emergencyClicked
 
-    height: 56
+    height: 66
     color:  "#060e09"
 
     Rectangle {
@@ -223,7 +223,7 @@ Rectangle {
         Rectangle {
             id: emergBtn
             property bool hovered: false
-            width:  168; height: 38; radius: 7
+            width:  160; height: 38; radius: 7
             color:        hovered ? "#cc0000" : "rgba(150,0,0,0.4)"
             border.color: "#ff3333"; border.width: 1
             Behavior on color { ColorAnimation { duration: 150 } }

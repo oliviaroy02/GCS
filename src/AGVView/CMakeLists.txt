@@ -29,6 +29,11 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
         AGVChipGroup.qml
         AGVOptionCards.qml
         AGVStatRow.qml
+        AGVRightButton.qml
+        AGVRightSection.qml
+        AGVRightToggle.qml
+        AGVStatDisplay.qml
+        BigOptionBtn.qml
 
     RESOURCE_PREFIX
         /qml

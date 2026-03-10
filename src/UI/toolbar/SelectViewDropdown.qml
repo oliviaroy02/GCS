@@ -735,7 +735,7 @@ ToolIndicatorPage {
                         // App Name
                         QGCLabel {
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text: "NestLink"
+                            text: "KamdarsCare"
                             font.pixelSize: 16
                             font.weight: Font.Bold
                             color: "#00d4ff"
@@ -761,37 +761,37 @@ ToolIndicatorPage {
                 }
 
                 // ----------------> Configuration
-                // Rectangle {
-                //     width:  parent.width
-                //     height: 52
-                //     color:  configMouse.pressed ? Qt.rgba(1, 1, 1, 0.15) : 
-                //             configMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                Rectangle {
+                    width:  parent.width
+                    height: 52
+                    color:  configMouse.pressed ? Qt.rgba(1, 1, 1, 0.15) : 
+                            configMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
 
-                //     Rectangle {
-                //         anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
-                //         width: 3; color: "#00d4ff"
-                //         visible: configMouse.containsMouse || configMouse.pressed
-                //     }
+                    Rectangle {
+                        anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
+                        width: 3; color: "#00d4ff"
+                        visible: configMouse.containsMouse || configMouse.pressed
+                    }
 
-                //     Row {
-                //         anchors.left: parent.left; anchors.leftMargin: 24
-                //         anchors.verticalCenter: parent.verticalCenter; spacing: 16
+                    Row {
+                        anchors.left: parent.left; anchors.leftMargin: 24
+                        anchors.verticalCenter: parent.verticalCenter; spacing: 16
 
-                //         QGCColoredImage {
-                //             width: 24; height: 24; anchors.verticalCenter: parent.verticalCenter
-                //             source: "/qmlimages/Gears.svg"; color: "#e0e0e0"; fillMode: Image.PreserveAspectFit
-                //         }
-                //         QGCLabel { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Configuration"); font.pixelSize: 15; color: "#e0e0e0" }
-                //     }
+                        QGCColoredImage {
+                            width: 24; height: 24; anchors.verticalCenter: parent.verticalCenter
+                            source: "/qmlimages/Gears.svg"; color: "#e0e0e0"; fillMode: Image.PreserveAspectFit
+                        }
+                        QGCLabel { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Configuration"); font.pixelSize: 15; color: "#e0e0e0" }
+                    }
 
-                //     MouseArea {
-                //         id: configMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
-                //         onClicked: { if (mainWindow.allowViewSwitch()) { mainWindow.closeIndicatorDrawer(); mainWindow.showVehicleConfig() } }
-                //     }
+                    MouseArea {
+                        id: configMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                        onClicked: { if (mainWindow.allowViewSwitch()) { mainWindow.closeIndicatorDrawer(); mainWindow.showVehicleConfig() } }
+                    }
 
-                //     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
-                //         anchors.leftMargin: 24; anchors.rightMargin: 24; height: 1; color: Qt.rgba(1, 1, 1, 0.1) }
-                // }
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
+                        anchors.leftMargin: 24; anchors.rightMargin: 24; height: 1; color: Qt.rgba(1, 1, 1, 0.1) }
+                }
 
                 // ----------------> Flight
                 Rectangle {
@@ -935,39 +935,39 @@ ToolIndicatorPage {
                 // }
 
                 // ----------------> Analyze
-                // Rectangle {
-                //     width: parent.width; height: 52; visible: QGroundControl.corePlugin.showAdvancedUI
-                //     color: analyzeMouse.pressed ? Qt.rgba(1, 1, 1, 0.15) : analyzeMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                Rectangle {
+                    width: parent.width; height: 52; visible: QGroundControl.corePlugin.showAdvancedUI
+                    color: analyzeMouse.pressed ? Qt.rgba(1, 1, 1, 0.15) : analyzeMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
 
-                //     Rectangle { anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
-                //         width: 3; color: "#00d4ff"; visible: analyzeMouse.containsMouse || analyzeMouse.pressed }
+                    Rectangle { anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
+                        width: 3; color: "#00d4ff"; visible: analyzeMouse.containsMouse || analyzeMouse.pressed }
 
-                //     Row {
-                //         anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 16
-                //         QGCColoredImage { width: 24; height: 24; anchors.verticalCenter: parent.verticalCenter
-                //             source: "/qmlimages/Analyze.svg"; color: "#e0e0e0"; fillMode: Image.PreserveAspectFit }
-                //         QGCLabel { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Analyze"); font.pixelSize: 15; color: "#e0e0e0" }
-                //     }
+                    Row {
+                        anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 16
+                        QGCColoredImage { width: 24; height: 24; anchors.verticalCenter: parent.verticalCenter
+                            source: "/qmlimages/Analyze.svg"; color: "#e0e0e0"; fillMode: Image.PreserveAspectFit }
+                        QGCLabel { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Analyze"); font.pixelSize: 15; color: "#e0e0e0" }
+                    }
 
-                //     Text { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter
-                //         text: "›"; font.pixelSize: 20; color: Qt.rgba(1, 1, 1, 0.5) }
+                    Text { anchors.right: parent.right; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter
+                        text: "›"; font.pixelSize: 20; color: Qt.rgba(1, 1, 1, 0.5) }
 
-                //     MouseArea { 
-                //         id: analyzeMouse; 
-                //         anchors.fill: parent; 
-                //         hoverEnabled: true; 
-                //         cursorShape: Qt.PointingHandCursor
-                //         onClicked: { 
-                //             if (mainWindow.allowViewSwitch()) { 
-                //                 mainWindow.closeIndicatorDrawer(); 
-                //                 mainWindow.showAnalyzeTool() 
-                //             } 
-                //         } 
-                //     }
+                    MouseArea { 
+                        id: analyzeMouse; 
+                        anchors.fill: parent; 
+                        hoverEnabled: true; 
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: { 
+                            if (mainWindow.allowViewSwitch()) { 
+                                mainWindow.closeIndicatorDrawer(); 
+                                mainWindow.showAnalyzeTool() 
+                            } 
+                        } 
+                    }
 
-                //     Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
-                //         anchors.leftMargin: 24; anchors.rightMargin: 24; height: 1; color: Qt.rgba(1, 1, 1, 0.1) }
-                // }
+                    Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right
+                        anchors.leftMargin: 24; anchors.rightMargin: 24; height: 1; color: Qt.rgba(1, 1, 1, 0.1) }
+                }
 
                 // ----------------> Settings
                 Rectangle {

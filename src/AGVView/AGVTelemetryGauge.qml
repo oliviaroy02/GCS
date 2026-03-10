@@ -1,3 +1,4 @@
+// src/AGVView/AGVTelemetryGauge.qml
 import QtQuick
 
 Rectangle {
@@ -6,9 +7,11 @@ Rectangle {
     property string unit:       ""
     property real   gaugeValue: 0.5
     property color  gaugeColor: "#4caf50"
+    // property QtObject th:         null
 
     height: 100
     color:  "#0d0d0d"
+    // color:  th ? th.bg : "#0d0d0d"
 
     Row {
         anchors.fill:    parent
@@ -31,13 +34,13 @@ Rectangle {
                 spacing: 5
                 Text {
                     text:           value
-                    color:          "#ffffff"
+                    color:          "#ffffff" //"#ffffff"
                     font.pixelSize: 20
                     font.weight:    Font.Bold
                 }
                 Text {
                     text:           unit
-                    color:          "#666666"
+                    color:          "#666666" //"#666666"
                     font.pixelSize: 14
                 }
             }
@@ -53,6 +56,21 @@ Rectangle {
             Canvas {
                 id: gaugeCanvas
                 anchors.fill: parent
+
+                // property color trackColor: th ? th.sliderTrack : "#2a2a2a"
+                // onTrackColorChanged: requestPaint()
+                // // onGaugeColorChanged: requestPaint()
+
+                // Connections {
+                //     target: root
+                //     function onGaugeValueChanged() { gaugeCanvas.requestPaint() }
+                //     function onGaugeColorChanged()  { gaugeCanvas.requestPaint() }
+                // }
+                // Connections {
+                //     target: root.th
+                //     function onSliderTrackChanged() { gaugeCanvas.requestPaint() }
+                // }
+
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
